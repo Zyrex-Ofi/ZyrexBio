@@ -13,6 +13,10 @@ dist
 certs
 
 # Runtime data & user-generated files
+# data/ is the local file-cache dir (CACHE_FILE_DIR=./data/cache): without
+# this line every `docker build` uploads the host's runtime cache to the
+# daemon (and to remote builders via docker-publish).
+data
 uploads
 backups
 pgdata

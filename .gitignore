@@ -36,15 +36,24 @@ npm-debug.log*
 *.tmp
 temp
 
-# TLS certificates (user-provided or auto-generated)
+# TLS certificates (user-provided or auto-generated).
+# The root `certs/*` line below never matched apps/backend/certs/, so the
+# GENERATED apps/backend/certs/custom-domains.conf slipped into 631ba0d.
+# It is rewritten by the backend at runtime (ACME/nginx generator) and must
+# not be versioned — untrack it with:
+#   git rm --cached apps/backend/certs/custom-domains.conf
 certs/*
 !certs/.gitkeep
+apps/backend/certs/*
 
 # Local verification tooling
 checks/
 
 # Uploads (user-generated files, e.g. avatars/banners; LOCAL_STORAGE_PATH)
 uploads/
+
+# Data
+data/
 
 # Databases & backups (may contain real credentials/data)
 *.db
