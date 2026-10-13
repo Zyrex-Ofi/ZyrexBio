@@ -215,13 +215,13 @@ export function Login() {
       <div className="flex-1 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-2xl font-bold text-white tracking-tight">
+          <Link to="/" className="font-display text-2xl font-bold text-white tracking-tight">
             {branding.name}
           </Link>
           <p className="mt-2 text-sm text-zinc-400">Sign in to your account</p>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-7 sm:p-8 space-y-5">
+        <div className="rounded-3xl glass-strong p-7 sm:p-8 space-y-5">
           {error && (
             <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
               {error}
@@ -243,7 +243,7 @@ export function Login() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="username or you@example.com"
-                    className="flex-1 rounded-lg border border-zinc-700 bg-zinc-900/50 px-3.5 py-2 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                    className="flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25"
                   />
                   <Button type="submit" disabled={loading} className="whitespace-nowrap">
                     {loading ? "Sending..." : "Send unlock email"}
@@ -268,7 +268,7 @@ export function Login() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="username or you@example.com"
-                    className="flex-1 rounded-lg border border-zinc-700 bg-zinc-900/50 px-3.5 py-2 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                    className="flex-1 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25"
                   />
                   <Button type="submit" disabled={loading} className="whitespace-nowrap">
                     {loading ? "Sending..." : "Send verification email"}
@@ -291,7 +291,7 @@ export function Login() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25"
                   placeholder="username or you@example.com"
                 />
               </div>
@@ -368,7 +368,7 @@ export function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25"
                   placeholder="••••••••"
                 />
               </div>
@@ -411,7 +411,7 @@ export function Login() {
                       required
                       value={totpCode}
                       onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-center text-xl tracking-[0.5em] text-white placeholder-zinc-600 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
+                      className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-2.5 text-center text-xl tracking-[0.5em] text-white placeholder-zinc-600 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25"
                       placeholder="••••••"
                     />
                   </div>

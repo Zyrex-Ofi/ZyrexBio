@@ -8,13 +8,23 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
-import { Showcase } from "@/components/landing/Showcase";import { GlobalThemeOverlay } from "@/components/landing/GlobalThemeOverlay";
+import { GlobalThemeOverlay } from "@/components/landing/GlobalThemeOverlay";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { ConsentGate } from "@/components/legal/ConsentGate";
 import { AnalyticsLoader } from "@/components/AnalyticsLoader";
-import { Pricing } from "@/components/landing/Pricing";
-import { FAQ } from "@/components/landing/FAQ";
-import { Footer } from "@/components/landing/Footer";
+
+// Below-fold landing sections load lazily: Showcase pulls the interactive
+// profile preview + layout metadata, the heaviest landing chunk.
+const Showcase = lazy(() =>
+  import("@/components/landing/Showcase").then((m) => ({ default: m.Showcase }))
+);
+const Pricing = lazy(() =>
+  import("@/components/landing/Pricing").then((m) => ({ default: m.Pricing }))
+);
+const FAQ = lazy(() => import("@/components/landing/FAQ").then((m) => ({ default: m.FAQ })));
+const LandingFooter = lazy(() =>
+  import("@/components/landing/Footer").then((m) => ({ default: m.Footer }))
+);
 
 const Login = lazy(() => import("@/pages/Login").then((m) => ({ default: m.Login })));
 const Register = lazy(() => import("@/pages/Register").then((m) => ({ default: m.Register })));
@@ -75,11 +85,15 @@ function Landing() {
         <GlobalThemeOverlay />
         <Hero />
         <Features />
-        <Showcase />
-        <Pricing />
-        <FAQ />
+        <Suspense fallback={null}>
+          <Showcase />
+          <Pricing />
+          <FAQ />
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <LandingFooter />
+      </Suspense>
     </>
   );
 }

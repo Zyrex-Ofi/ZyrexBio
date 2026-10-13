@@ -117,11 +117,15 @@ export function FxOverlay({ effect = "none", className = "", accent = "#ffffff",
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // DPR capped at 1.5: halves pixel work vs 2x with no visible loss for particles.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let width = 0;
     let height = 0;
     let parts: Particle[] = [];
     let stopped = false;
+    // Pause the loop while the canvas is offscreen (landing FX below fold,
+    // scrolled-past profiles). An IntersectionObserver flips this flag.
+    let inView = true;
 
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
@@ -142,9 +146,20 @@ export function FxOverlay({ effect = "none", className = "", accent = "#ffffff",
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
 
+    // Offscreen canvases keep no rAF work: the loop early-outs each frame.
+    const io = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+    });
+    io.observe(canvas);
+
     let last = performance.now();
     const loop = (now: number) => {
       if (stopped) return;
+      if (!inView || document.hidden) {
+        rafRef.current = requestAnimationFrame(loop);
+        last = now;
+        return;
+      }
       const dt = Math.min(now - last, 50) / 16;
       last = now;
       ctx.clearRect(0, 0, width, height);
@@ -215,6 +230,7 @@ export function FxOverlay({ effect = "none", className = "", accent = "#ffffff",
       stopped = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       ro.disconnect();
+      io.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
       ctx.clearRect(0, 0, width, height);
     };

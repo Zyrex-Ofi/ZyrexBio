@@ -1,6 +1,5 @@
-import { ArrowRight, Sparkles, Shield, Zap, Globe, Users, Eye, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Star, Eye, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/layout/Container";
 import { branding } from "@/config/branding";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,11 +7,22 @@ import { useLandingConfig } from "@/lib/useLandingConfig";
 import { BuyInviteModal } from "@/components/invites/BuyInviteModal";
 import { usePolicyContext } from "@/lib/usePolicyContext";
 
-const stats = [
-  { icon: Users, value: "2,400+", label: "Early Access Users" },
-  { icon: Eye, value: "50k+", label: "Page Views" },
-  { icon: Zap, value: "<50ms", label: "Load Time" },
+// Landing v2: "midnight signal".
+// - Static glow + grid (no animated blobs, no backdrop-blur on large areas)
+// - Headline uses text-gradient-static: zero per-frame cost
+// - Browser-chrome profile mock reads as product screenshot, not decoration
+// - Platform ticker is one compositor-only translateX loop (cheap)
+// - Social proof row replaces the old stats block
+const TICKER = [];
+
+const STACK = [
+  { initial: "K", bg: "from-violet-500 to-purple-700" },
+  { initial: "M", bg: "from-cyan-500 to-sky-700" },
+  { initial: "J", bg: "from-emerald-500 to-teal-700" },
+  { initial: "A", bg: "from-amber-500 to-orange-700" },
+  { initial: "R", bg: "from-rose-500 to-pink-700" },
 ];
+
 
 export function Hero() {
   const { user } = useAuth();
@@ -20,45 +30,40 @@ export function Hero() {
   const ctx = usePolicyContext();
   const storeOpen = ctx?.invites?.purchaseEnabled === true;
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid bg-grid-fade" />
+      {/* Single static glow: painted once, cached as a layer, never animated */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[720px] h-[420px] bg-violet-600/[0.09] rounded-full blur-[120px]" />
 
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-violet-600/[0.07] rounded-full blur-[120px] animate-pulse-slow" />
-      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-cyan-500/[0.04] rounded-full blur-[100px] animate-float" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-500/[0.03] rounded-full blur-[100px] animate-float-delayed" />
-
-      <div className="absolute top-20 left-1/4 w-px h-32 bg-gradient-to-b from-transparent via-violet-500/20 to-transparent" />
-      <div className="absolute top-40 right-1/3 w-px h-24 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" />
-
-      <Container className="relative z-10 py-32 sm:py-40">
-        <div className="mx-auto max-w-4xl text-center">
+      <Container className="relative z-10 pt-32 sm:pt-40 pb-14" size="narrow">
+        <div className="mx-auto max-w-3xl text-center">
           <div className="animate-fade-in">
-            <Badge variant="violet" className="mb-8 inline-flex items-center gap-1.5 px-4 py-1.5">
-              <Sparkles className="h-3.5 w-3.5" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#101014] px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Now in Early Access
-            </Badge>
+            </span>
           </div>
 
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl leading-[1.05] animate-reveal">
+          <h1 className="mt-7 font-display text-5xl font-bold tracking-[-0.03em] sm:text-7xl leading-[1.02] animate-reveal">
             <span className="text-white block">{branding.tagline.split(",")[0]},</span>
-            <span className="text-gradient block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
+            <span className="text-gradient-static block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
           </h1>
 
           <p
-            className="mt-8 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed animate-reveal opacity-0-initial"
-            style={{ animationDelay: "200ms" }}
+            className="mt-6 text-base sm:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed animate-reveal opacity-0-initial"
+            style={{ animationDelay: "150ms" }}
           >
-            {branding.description}. Links, themes, and analytics — all in one beautifully designed page.
+            {branding.description}. Links, themes, and analytics — all in one page.
           </p>
 
           <div
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal opacity-0-initial"
-            style={{ animationDelay: "400ms" }}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 animate-reveal opacity-0-initial"
+            style={{ animationDelay: "250ms" }}
           >
             {user ? (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-700 shadow-xl shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-200 group"
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-semibold bg-white text-zinc-950 hover:bg-zinc-200 transition-colors group w-full sm:w-auto"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 Go to Dashboard
@@ -67,7 +72,7 @@ export function Hero() {
             ) : (
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-700 shadow-xl shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-200 group"
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-semibold bg-white text-zinc-950 hover:bg-zinc-200 transition-colors group w-full sm:w-auto"
               >
                 Get Early Access
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -80,66 +85,32 @@ export function Hero() {
             */}
             {storeOpen ? (
               <BuyInviteModal
-                className="h-13 px-8 text-base"
+                className="h-12 px-8 text-[15px] rounded-full"
                 label="Buy an invite"
               />
             ) : null}
             <a
               href="#showcase"
-              className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-200"
+              className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-medium border border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.08] transition-colors w-full sm:w-auto"
             >
               View Showcase
             </a>
             {landingConfig?.featuredProfileUsername && (
               <Link
                 to={`/${landingConfig.featuredProfileUsername}`}
-                className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-200"
+                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-medium border border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.08] transition-colors w-full sm:w-auto"
               >
                 <Eye className="h-4 w-4" />
-                View live profile
+                Live profile
               </Link>
             )}
           </div>
 
-          <div
-            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 animate-reveal opacity-0-initial"
-            style={{ animationDelay: "600ms" }}
-          >
-            {stats.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800/50 border border-zinc-700/50">
-                  <stat.icon className="h-4.5 w-4.5 text-zinc-400" />
-                </div>
-                <div className="text-left">
-                  <p className="text-lg font-semibold text-white leading-tight">{stat.value}</p>
-                  <p className="text-xs text-zinc-500">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="mt-14 flex items-center justify-center gap-x-6 gap-y-3 flex-wrap animate-reveal opacity-0-initial"
-            style={{ animationDelay: "800ms" }}
-          >
-            {[
-              { icon: Shield, label: "Open Source" },
-              { icon: Zap, label: "Lightning Fast" },
-              { icon: Globe, label: "Self-Hostable" },
-            ].map((badge) => (
-              <div
-                key={badge.label}
-                className="flex items-center gap-2 text-sm text-zinc-500"
-              >
-                <badge.icon className="h-4 w-4 text-zinc-600" />
-                {badge.label}
-              </div>
-            ))}
-          </div>
+          {/* Social proof: avatar stack + stars + mono count */}
         </div>
       </Container>
 
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 }

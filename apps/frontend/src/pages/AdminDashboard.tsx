@@ -1032,22 +1032,27 @@ export function AdminDashboard() {
   const roleUserCount = (roleId: string) => users.filter((u) => u.roleId === roleId).length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-zinc-800/80 bg-zinc-900/30">
-        <div className="mx-auto flex h-auto min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-3 sm:px-6 lg:px-8">
-          <Link to="/" className="text-lg font-bold text-white tracking-tight">
-            {branding.name}
+    <div className="min-h-screen bg-background bg-noise">
+      <header className="sticky top-3 z-40 px-3 sm:px-4">
+        <div className="mx-auto flex h-auto min-h-14 max-w-3xl flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-full glass-strong px-4 py-2 shadow-xl shadow-black/30">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-bold text-zinc-950">
+              {branding.name.charAt(0)}
+            </span>
+            <span className="font-display text-[15px] font-bold text-white tracking-tight">
+              {branding.name}
+            </span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1 sm:gap-2">
             <Link
               to="/dashboard"
-              className="text-sm text-violet-400 hover:text-violet-300 transition-colors font-medium"
+              className="rounded-full px-3 py-1.5 text-[13px] font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
             >
               My Dashboard
             </Link>
-            <span className="inline-flex items-center gap-2 text-sm text-zinc-400">
-              {user?.username}
-              <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-400 border border-violet-500/20">
+            <span className="hidden md:inline-flex items-center gap-2 font-mono text-[11px] text-zinc-500">
+              @{user?.username}
+              <span className="rounded-full glass px-2 py-0.5 text-[10px] font-semibold text-zinc-300">
                 {user?.role?.name ?? "Staff"}
               </span>
             </span>
@@ -1076,9 +1081,9 @@ export function AdminDashboard() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-12 sm:py-16">
-        <h1 className="text-2xl font-bold text-white mb-2">Admin Dashboard</h1>
-        <p className="text-zinc-400 mb-8">Manage invite codes, users, roles, badges and security.</p>
+      <main className="mx-auto max-w-3xl px-4 py-10 sm:py-12">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-white mb-1">Admin Dashboard</h1>
+        <p className="font-mono text-xs text-zinc-500 mb-6">Manage invite codes, users, roles, badges and security.</p>
 
         {locked && (
           <div className="mb-8 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
@@ -1093,15 +1098,15 @@ export function AdminDashboard() {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-1 mb-8 rounded-lg border border-zinc-800/80 bg-zinc-900/30 p-1">
+        <div className="flex gap-1.5 mb-6 rounded-full glass p-1.5 overflow-x-auto">
           {allowedTabs.map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-[13px] font-medium transition-all ${
                 tab === t
-                  ? "bg-zinc-800 text-white"
-                  : "text-zinc-400 hover:text-zinc-300"
+                  ? "bg-white text-zinc-950 shadow"
+                  : "text-zinc-400 hover:text-white hover:bg-white/5"
               }`}
             >
               {t === "codes" ? "Invite Codes" : t === "users" ? "Users" : t === "roles" ? "Roles" : t === "badges" ? "Badges" : t === "bans" ? "Bans" : t === "domains" ? "Custom Domains" : t === "themes" ? "Theming" : t === "landing" ? "Landing" : t === "affiliates" ? "Affiliate" : t === "orders" ? "Orders" : t === "newsletter" ? "Newsletter" : t === "policy" ? "Legal" : "Logs"}

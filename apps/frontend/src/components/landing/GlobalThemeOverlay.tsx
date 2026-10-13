@@ -114,7 +114,6 @@ export function GlobalThemeOverlay() {
               backgroundImage: toBackgroundImage(backgroundImage),
               backgroundSize: "cover",
               backgroundPosition: "center",
-              backgroundAttachment: "fixed",
               backgroundColor: config?.bg ?? "transparent",
             }
           : { backgroundColor: config?.bg ?? "transparent" }

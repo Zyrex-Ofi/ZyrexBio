@@ -8,7 +8,10 @@ import { CACHE_DIR_NAME, LONG_CACHE, materializeUpload, uploadRoot } from "./med
 const ALLOWED_WIDTHS = new Set([64, 96, 128, 160, 192, 256, 320, 384, 480, 640, 768, 896, 960, 1024, 1280, 1440, 1600, 1920]);
 const DEFAULT_QUALITY = 80;
 const MAX_WIDTH = 1920;
-const IMAGE_EXTS = new Set([".jpeg", ".jpg", ".png", ".webp"]);
+// GIF uploads are allowed (see ALLOWED_EXTS in routes/profile.ts) and sharp
+// decodes them (first frame), so resized variants must serve them too —
+// without this entry every `?w=` avatar/banner thumbnail of a GIF 404'd.
+const IMAGE_EXTS = new Set([".jpeg", ".jpg", ".png", ".gif", ".webp"]);
 
 const MIME_TYPES: Record<string, string> = {
   webp: "image/webp",

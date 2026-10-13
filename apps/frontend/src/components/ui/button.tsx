@@ -1,7 +1,7 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactElement } from "react";
 import { cn } from "@/lib/utils";
 
-type ButtonVariant = "default" | "secondary" | "ghost" | "outline" | "link";
+type ButtonVariant = "default" | "brand" | "secondary" | "ghost" | "outline" | "link";
 type ButtonSize = "default" | "sm" | "lg" | "icon";
 
 interface BaseButtonProps {
@@ -16,15 +16,22 @@ type ButtonAsButton = BaseButtonProps &
 type ButtonAsLink = BaseButtonProps &
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof BaseButtonProps> & { href: string };
 
+// Guns.lol-style buttons: monochrome first, brand violet only for primary CTA.
+// - default = white pill (highest contrast, like guns.lol "claim" buttons)
+// - brand = violet pill (marketing CTA only)
+// - secondary/ghost/outline = glass hairlines, no solid zinc
+
 const variantStyles: Record<ButtonVariant, string> = {
   default:
-    "bg-violet-600 text-white hover:bg-violet-700 shadow-lg shadow-violet-600/20",
+    "bg-zinc-100 text-zinc-950 hover:bg-white shadow-[0_8px_30px_-8px_rgba(255,255,255,0.25)]",
+  brand:
+    "bg-violet-600 text-white hover:bg-violet-500 shadow-lg shadow-violet-600/25",
   secondary:
-    "bg-zinc-800 text-zinc-100 hover:bg-zinc-700 border border-zinc-700",
-  ghost: "text-zinc-400 hover:text-white hover:bg-zinc-800/50",
+    "glass text-zinc-100 hover:bg-white/[0.08]",
+  ghost: "text-zinc-400 hover:text-white hover:bg-white/5",
   outline:
-    "border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white",
-  link: "text-violet-400 hover:text-violet-300 underline-offset-4 hover:underline",
+    "border border-white/10 text-zinc-300 hover:bg-white/5 hover:text-white",
+  link: "text-zinc-300 hover:text-white underline-offset-4 hover:underline",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -35,7 +42,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 };
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-[0.98]";
 
 export function Button(props: ButtonAsLink): ReactElement;
 export function Button(props: ButtonAsButton): ReactElement;

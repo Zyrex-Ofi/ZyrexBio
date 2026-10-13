@@ -1,12 +1,13 @@
 import { type HTMLAttributes, forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
+// Glass card: hairline white border + translucent blur (guns.lol surface).
 const Card = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "rounded-xl border border-zinc-800 bg-zinc-900/50 backdrop-blur-sm",
+        "rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md",
         className
       )}
       {...props}

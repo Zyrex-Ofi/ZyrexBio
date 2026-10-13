@@ -171,9 +171,10 @@ export function PublicProfilePage() {
   const seasonal = profile.seasonal?.theme ?? null;
   const scfg = seasonal?.config ?? {};
   // Seasonal themes win entirely over the user's custom theme while active.
-  const bg = scfg.bg ?? theme.bg ?? "#09090b";
-  const cardBg = scfg.cardBg ?? theme.cardBg ?? "rgba(24,24,27,0.6)";
-  const textColor = scfg.text ?? theme.text ?? "#e4e4e7";
+  // Renewed defaults: near-black base + translucent white glass card (guns.lol).
+  const bg = scfg.bg ?? theme.bg ?? "#08080a";
+  const cardBg = scfg.cardBg ?? theme.cardBg ?? "rgba(255,255,255,0.04)";
+  const textColor = scfg.text ?? theme.text ?? "#ededed";
   const accent = scfg.accent ?? theme.accent ?? "#7c3aed";
   const fontFamily = scfg.fontFamily ?? theme.fontFamily ?? "Inter, system-ui, sans-serif";
 
@@ -182,24 +183,7 @@ export function PublicProfilePage() {
   const layout = (scfg.layout ?? theme.layout ?? "default") as string;
   const effect: FxEffect = (scfg.effect as FxEffect) ?? (theme.animatedFx ? (theme.effect as FxEffect) : "none") ?? "none";
 
-  const layoutClasses: Record<string, string> = {
-    default: "items-center",
-    grid: "items-center",
-    compact: "items-center",
-    wide: "items-center",
-    glassmorphism: "items-center",
-    minimal: "items-center",
-    sidebar: "items-center",
-    editorial: "items-center",
-    hero: "items-center",
-    bento: "items-center",
-    terminal: "items-center",
-    polaroid: "items-center",
-    topbar: "items-center",
-  };
-
-  const layoutClass = layoutClasses[layout] ?? "items-center";
-
+  // All layouts collapse toward a centered narrow column.
   const isSidebar = layout === "sidebar";
   const isEditorial = layout === "editorial";
   const isCompact = layout === "compact";
@@ -209,21 +193,17 @@ export function PublicProfilePage() {
   const isHero = layout === "hero";
   const isTopbar = layout === "topbar";
 
+  // Renewed: guns.lol is a single narrow column. All layouts collapse toward
+  // 600px; only gallery-style layouts get slightly more room.
   const contentWidthClass = (() => {
     switch (layout) {
       case "wide":
       case "sidebar":
       case "editorial":
       case "bento":
-        return "max-w-5xl";
-      case "compact":
-      case "minimal":
         return "max-w-3xl";
-      case "terminal":
-      case "polaroid":
-        return "max-w-2xl";
       default:
-        return "max-w-4xl";
+        return "max-w-[600px]";
     }
   })();
 
@@ -239,96 +219,73 @@ export function PublicProfilePage() {
       ? `grid gap-4 sm:grid-cols-2 lg:grid-cols-12 ${contentWidthClass}`
       : contentWidthClass;
 
+  // Renewed card: one glass surface, 24px radius, hairline border, soft shadow.
+  // Polaroid/terminal/minimal keep their bespoke surfaces; everything else is glass.
   const cardStyle: React.CSSProperties = {
     color: displayTextColor,
     ...(isPolaroid
       ? {
           backgroundColor: "#f6f2e7",
-          border: `1px solid ${accent}33`,
+          border: "1px solid rgba(0,0,0,0.08)",
           boxShadow: "0 24px 60px -24px rgba(0,0,0,0.5)",
           transform: "rotate(-1.25deg)",
           padding: "clamp(1.5rem, 4vw, 2.5rem)",
+          borderRadius: "1.5rem",
         }
       : layout === "minimal"
         ? {
-            background: "transparent",
+            background: "rgba(255,255,255,0.03)",
             boxShadow: "none",
-            border: "none",
-            padding: "clamp(1.75rem, 5vw, 3rem)",
-            ...(backgroundImage
-              ? {
-                  backdropFilter: "blur(10px)",
-                  WebkitBackdropFilter: "blur(10px)",
-                  backgroundColor: "rgba(9,9,11,0.28)",
-                }
-              : {}),
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "1.5rem",
+            padding: "clamp(1.75rem, 5vw, 2.5rem)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
           }
         : {
             backgroundColor: cardBg,
+            border: "1px solid rgba(255,255,255,0.08)",
+            borderRadius: "1.5rem",
+            boxShadow: "0 24px 70px -30px rgba(0,0,0,0.7)",
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
             padding:
               layout === "compact" || layout === "topbar"
-                ? "clamp(0.875rem, 2.5vw, 1.25rem)"
+                ? "clamp(1.25rem, 3vw, 1.75rem)"
                 : layout === "editorial"
-                  ? "clamp(1.75rem, 5vw, 3rem)"
-                  : "clamp(1.25rem, 4vw, 2rem)",
-            ...(layout === "glassmorphism"
-              ? {
-                  backdropFilter: "blur(16px)",
-                  WebkitBackdropFilter: "blur(16px)",
-                  border: `1px solid ${accent}22`,
-                }
-              : layout === "terminal"
-                ? {
-                    border: `1px solid ${accent}30`,
-                    boxShadow: `0 0 40px -12px ${accent}40, inset 0 0 60px -45px ${accent}50`,
-                    borderRadius: "0.85rem",
-                    padding: "0",
-                  }
-                : {}),
+                  ? "clamp(1.75rem, 5vw, 2.75rem)"
+                  : "clamp(1.5rem, 4vw, 2.25rem)",
           }),
   };
 
+  // Renewed: only two link densities. Tiles for gallery layouts, rows otherwise.
   const linkVariant =
     layout === "grid" || layout === "bento"
       ? "tile"
-      : layout === "compact"
-        ? "tight"
-        : layout === "editorial" || layout === "topbar"
-          ? "divider"
-          : "row";
+      : "row";
 
   const linkContainerClass =
-    layout === "grid"
+    layout === "grid" || layout === "bento" || layout === "wide" || layout === "sidebar"
       ? "grid gap-2.5 sm:grid-cols-2"
-      : layout === "bento"
-        ? "grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        : layout === "wide"
-          ? "grid gap-2.5 sm:grid-cols-3"
-          : layout === "compact"
-            ? "flex flex-col gap-1.5"
-            : layout === "editorial" || layout === "topbar"
-              ? "flex flex-col"
-            : layout === "sidebar"
-              ? "grid gap-2.5 sm:grid-cols-2"
-              : layout === "terminal"
-                ? "flex flex-col gap-1.5"
-                : "flex flex-col gap-2.5";
+      : "flex flex-col gap-2.5";
 
+  // Renewed: hero-size avatar everywhere (guns.lol centers a large avatar).
   const avatarSize = (() => {
-    if (isHero) return { width: "clamp(6rem, 14vw, 8.5rem)", height: "clamp(6rem, 14vw, 8.5rem)" };
-    if (isSidebar || isBento) return { width: "clamp(5rem, 12vw, 7rem)", height: "clamp(5rem, 12vw, 7rem)" };
-    if (isCompact || isTopbar || isTerminal) return { width: "clamp(2.4rem, 6vw, 3rem)", height: "clamp(2.4rem, 6vw, 3rem)" };
-    return { width: "clamp(3.5rem, 9vw, 5rem)", height: "clamp(3.5rem, 9vw, 5rem)" };
+    if (isHero) return { width: "clamp(6.5rem, 15vw, 9rem)", height: "clamp(6.5rem, 15vw, 9rem)" };
+    if (isSidebar || isBento) return { width: "clamp(5.5rem, 12vw, 7.5rem)", height: "clamp(5.5rem, 12vw, 7.5rem)" };
+    if (isCompact || isTopbar || isTerminal) return { width: "clamp(3rem, 7vw, 3.75rem)", height: "clamp(3rem, 7vw, 3.75rem)" };
+    return { width: "clamp(5.5rem, 12vw, 7.5rem)", height: "clamp(5.5rem, 12vw, 7.5rem)" };
   })();
 
   const renderAvatar = (size: { width: string; height: string }, extraClassName = "") => {
-    const ring = isPolaroid ? "" : "ring-4 ring-black/30";
+    // Hairline white ring + accent glow instead of flat black ring.
+    const ring = isPolaroid ? "" : "avatar-ring";
     if (profile.avatar) {
       return (
         <img
           src={profile.avatar}
           srcSet={avatarSrcSet(profile.avatar)}
-          sizes="120px"
+          sizes="160px"
           decoding="async"
           alt={profile.displayName ?? profile.username}
           className={`shrink-0 ${isPolaroid ? "rounded-sm" : "rounded-full"} object-cover ${ring} ${extraClassName}`}
@@ -384,26 +341,24 @@ export function PublicProfilePage() {
       <div className="mt-7 w-full border-t" style={{ borderColor: `${accent}26` }} />
     </div>
   ) : (
-    <div className={`flex items-center gap-3 sm:gap-4 ${isSidebar ? "flex-col items-center text-center gap-4" : ""}`}>
+    <div className="flex flex-col items-center text-center gap-3">
       {renderAvatar(avatarSize)}
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 w-full">
         <h1
-          className="font-bold truncate"
+          className="font-display font-bold truncate tracking-tight"
           style={{
             color: displayTextColor,
-            fontSize:
-              isHero ? "clamp(2rem, 4.5vw, 2.75rem)"
-                : isCompact || isTopbar ? "clamp(1rem, 2.5vw, 1.25rem)"
-                  : "clamp(1.25rem, 3.5vw, 1.75rem)",
+            fontSize: "clamp(1.6rem, 4vw, 2.1rem)",
+            letterSpacing: "-0.02em",
           }}
         >
           {profile.displayName ?? profile.username}
         </h1>
-        <p className="text-xs sm:text-sm truncate" style={{ color: displayMuted }}>
+        <p className="font-mono text-xs sm:text-[13px] truncate mt-1" style={{ color: displayMuted }}>
           @{profile.username}
         </p>
         {profile.badges && profile.badges.length > 0 && (
-          <div className={`flex flex-wrap gap-1.5 mt-2 ${isTopbar ? "sm:hidden" : ""}`}>
+          <div className="flex flex-wrap justify-center gap-1.5 mt-2.5">
             {profile.badges
               .map((id) => badgeCatalog.find((b) => b.id === id))
               .filter((b): b is Badge => Boolean(b))
@@ -413,24 +368,12 @@ export function PublicProfilePage() {
           </div>
         )}
       </div>
-      {isTopbar && profile.badges && profile.badges.length > 0 && (
-        <div className="hidden sm:flex flex-wrap justify-end gap-1.5 ml-auto">
-          {profile.badges
-            .map((id) => badgeCatalog.find((b) => b.id === id))
-            .filter((b): b is Badge => Boolean(b))
-            .map((badge) => (
-              <BadgePill key={badge.id} badge={badge} />
-            ))}
-        </div>
-      )}
     </div>
   );
 
   const bioBlock = profile.bio ? (
     <p
-      className={`text-sm leading-relaxed whitespace-pre-wrap ${isSidebar ? "mt-4" : "mt-4 sm:mt-5"} ${
-        isEditorial ? "mt-5 text-center max-w-xl mx-auto" : ""
-      }`}
+      className="mt-4 text-sm leading-relaxed whitespace-pre-wrap text-center max-w-md mx-auto"
       style={{ color: `${displayTextColor}cc` }}
     >
       {profile.bio}
@@ -439,7 +382,7 @@ export function PublicProfilePage() {
 
   const metaBlock = (
     <div
-      className={`mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${isEditorial ? "justify-center" : ""}`}
+      className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-mono text-[11px]"
       style={{ color: displayMuted }}
     >
       {profile.location && (
@@ -453,10 +396,8 @@ export function PublicProfilePage() {
           href={profile.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 transition-colors"
+          className="flex items-center gap-1 transition-colors hover:text-white"
           style={{ color: displayMuted }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = accent)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = displayMuted)}
         >
           <Globe className="h-3.5 w-3.5" />
           {new URL(profile.website).hostname || profile.website}
@@ -520,27 +461,29 @@ export function PublicProfilePage() {
         }
       : {};
 
+    // Renewed: single gun-link surface. No per-accent hex-alpha concat
+    // (fragile on non-hex colors). Hairline white border + blur everywhere.
     const variantClass =
       variant === "tile"
-        ? "flex-col items-center justify-center gap-2.5 px-4 py-6 rounded-xl text-center"
+        ? "flex-col items-center justify-center gap-2.5 px-4 py-6 text-center"
         : variant === "tight"
-          ? "gap-2.5 px-2.5 py-2 rounded-lg"
-          : variant === "divider"
-            ? "gap-3 px-2 py-3 rounded-none"
-            : "gap-3 px-4 py-3 rounded-xl";
+          ? "gap-2.5 px-4 py-2.5"
+          : "gap-3 px-4 py-3.5";
 
     const icon = features?.linksCustomIcons && link.image ? (
       <img
         src={link.image}
         alt=""
-        className={variant === "tile" ? "h-6 w-6 flex-shrink-0 rounded object-contain" : "h-5 w-5 flex-shrink-0 rounded object-contain"}
+        className={variant === "tile" ? "h-6 w-6 flex-shrink-0 rounded-full object-cover" : "h-9 w-9 flex-shrink-0 rounded-full object-cover"}
       />
     ) : features?.linksCustomIcons && link.icon ? (
-      <span aria-hidden className={variant === "tile" ? "h-6 w-6 flex-shrink-0 text-center leading-6 text-lg" : "h-5 w-5 flex-shrink-0 text-center leading-5 text-base"}>
+      <span aria-hidden className="h-9 w-9 flex-shrink-0 rounded-full glass text-center leading-9 text-base">
         {link.icon}
       </span>
     ) : (
-      <PlatformIcon platform={link.platform} className={variant === "tile" ? "h-6 w-6 flex-shrink-0" : "h-5 w-5 flex-shrink-0"} color={accent} />
+      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full glass">
+        <PlatformIcon platform={link.platform} className="h-4.5 w-4.5" color={textColor} />
+      </span>
     );
 
     const content =
@@ -577,18 +520,9 @@ export function PublicProfilePage() {
     return (
       <Tag
         {...(linkProps as Record<string, unknown>)}
-        className={`flex w-full text-sm font-medium transition-all duration-200 ${variantClass} ${
-          isClickable
-            ? variant === "tile"
-              ? "hover:-translate-y-0.5 cursor-pointer"
-              : "hover:scale-[1.02] cursor-pointer"
-            : "cursor-default"
+        className={`gun-link flex w-full items-center text-sm font-medium ${variantClass} ${
+          isClickable ? "cursor-pointer" : "cursor-default"
         }`}
-        style={
-          variant === "divider"
-            ? { borderBottom: `1px solid ${accent}16` }
-            : { backgroundColor: `${accent}12`, border: `1px solid ${accent}25` }
-        }
         onClick={isClickable && profile.id ? () => {
           api.trackClick(profile.id, link.platform, link.label?.trim() || link.platform).catch(() => {});
         } : undefined}
@@ -747,41 +681,51 @@ export function PublicProfilePage() {
   ) : null;
 
   return (
+    // Renewed shell: blurred banner as fixed backdrop + dark overlay + narrow column.
     <div
-      className={`min-h-screen flex flex-col ${layoutClass} py-8 sm:py-12 px-4 sm:px-6 relative`}
+      className="min-h-screen flex flex-col items-center py-10 sm:py-14 px-4 relative"
       style={{
         backgroundColor: bg,
         color: textColor,
         fontFamily,
-        ...(backgroundImage
-          ? {
-              backgroundImage: toBackgroundImage(backgroundImage),
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundAttachment: "fixed",
-            }
-          : {}),
       }}
     >
+      {/* Backdrop: banner image blurred full-bleed (guns.lol vibe), else ambient glow */}
+      {backgroundImage ? (
+        <div
+          className="pointer-events-none fixed inset-0"
+          style={{
+            backgroundImage: toBackgroundImage(backgroundImage),
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(60px) brightness(0.35) saturate(1.2)",
+            transform: "scale(1.15)",
+          }}
+        />
+      ) : (
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(139,92,246,0.1),transparent)]" />
+      )}
+      <div className="pointer-events-none fixed inset-0 bg-black/35" />
       <FxOverlay effect={effect} accent={accent} />
       {shopReturnNotice}
       {profile.banner && (
-        <div className={`relative z-10 w-full ${contentWidthClass} mb-5 sm:mb-6 rounded-2xl overflow-hidden`}>
+        <div className="relative z-10 w-full max-w-[600px] mb-5 rounded-3xl overflow-hidden border border-white/10">
           <img
             src={profile.banner}
             srcSet={bannerSrcSet(profile.banner)}
-            sizes="(min-width: 928px) 896px, 92vw"
+            sizes="(min-width: 640px) 600px, 92vw"
             fetchPriority="high"
             decoding="async"
             alt="Banner"
             className="w-full object-cover"
-            style={{ height: "clamp(7rem, 16vw, 11rem)" }}
+            style={{ height: "clamp(8rem, 18vw, 12rem)" }}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
         </div>
       )}
 
       <div
-        className={`relative z-10 w-full ${cardLayoutClass} rounded-2xl text-left`}
+        className={`relative z-10 w-full ${cardLayoutClass} text-left animate-scale-in`}
         style={cardStyle}
       >
         {layout === "hero" || layout === "terminal" || layout === "polaroid" || layout === "topbar" ? (
@@ -983,14 +927,14 @@ export function PublicProfilePage() {
         )}
       </div>
 
-      <div className="mt-8 flex items-center gap-3">
-        <VersionBadge />
-        <p className="text-xs" style={{ color: `${textColor}44` }}>
+      <div className="relative z-10 mt-8 flex flex-col items-center gap-2.5">
+        <p className="font-mono text-[11px] text-zinc-600">
           Powered by{" "}
-          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80 transition-opacity">
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-white transition-colors">
             {branding.name}
           </a>
         </p>
+        <VersionBadge />
       </div>
 
       {profile.musicTracks && profile.musicTracks.length > 0 && (

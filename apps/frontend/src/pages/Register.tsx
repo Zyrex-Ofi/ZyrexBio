@@ -117,14 +117,14 @@ export function Register() {
       <div className="flex-1 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-2xl font-bold text-white tracking-tight">
+          <Link to="/" className="font-display text-2xl font-bold text-white tracking-tight">
             {branding.name}
           </Link>
           <p className="mt-2 text-sm text-zinc-400">Create your account</p>
         </div>
 
         {verificationPending ? (
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-7 sm:p-8 text-center">
+          <div className="rounded-3xl glass-strong p-7 sm:p-8 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-500/10 border border-violet-500/30">
               <MailIcon className="h-6 w-6 text-violet-400" />
             </div>
@@ -147,7 +147,7 @@ export function Register() {
           <form
             onSubmit={handleSubmit}
             noValidate
-            className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 p-7 sm:p-8 space-y-5"
+            className="rounded-3xl glass-strong p-7 sm:p-8 space-y-5"
           >
             {purchasedOrder && (
               <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
@@ -194,7 +194,7 @@ export function Register() {
               }}
               aria-invalid={Boolean(fieldErrors.inviteCode)}
               aria-describedby={fieldErrors.inviteCode ? "inviteCode-error" : undefined}
-              className={`w-full rounded-lg border ${fieldErrors.inviteCode ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 font-mono`}
+              className={`w-full rounded-lg border ${fieldErrors.inviteCode ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25 font-mono`}
               placeholder="Enter your invite code"
             />
             {fieldErrors.inviteCode && <p id="inviteCode-error" className="mt-1.5 text-xs text-red-400">{fieldErrors.inviteCode}</p>}
@@ -238,7 +238,7 @@ export function Register() {
               }}
               aria-invalid={Boolean(fieldErrors.username)}
               aria-describedby={fieldErrors.username ? "username-error" : undefined}
-              className={`w-full rounded-lg border ${fieldErrors.username ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 font-mono`}
+              className={`w-full rounded-lg border ${fieldErrors.username ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25 font-mono`}
               placeholder="your-username"
               minLength={3}
               maxLength={32}
@@ -266,7 +266,7 @@ export function Register() {
               }}
               aria-invalid={Boolean(fieldErrors.email)}
               aria-describedby={fieldErrors.email ? "email-error" : undefined}
-              className={`w-full rounded-lg border ${fieldErrors.email ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30`}
+              className={`w-full rounded-lg border ${fieldErrors.email ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25`}
               placeholder="you@example.com"
             />
             {fieldErrors.email && <p id="email-error" className="mt-1.5 text-xs text-red-400">{fieldErrors.email}</p>}
@@ -288,7 +288,7 @@ export function Register() {
               }}
               aria-invalid={Boolean(fieldErrors.password)}
               aria-describedby={fieldErrors.password ? "password-error" : undefined}
-              className={`w-full rounded-lg border ${fieldErrors.password ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30`}
+              className={`w-full rounded-lg border ${fieldErrors.password ? "border-red-500/70" : "border-zinc-800"} bg-zinc-900/50 px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none transition-colors focus:border-white/25 focus:ring-1 focus:ring-white/25`}
               placeholder="Min. 8 characters"
             />
             {fieldErrors.password && <p id="password-error" className="mt-1.5 text-xs text-red-400">{fieldErrors.password}</p>}

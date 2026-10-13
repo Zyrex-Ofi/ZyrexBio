@@ -26,6 +26,9 @@ export function ImageCropper({
   onCancel,
 }: ImageCropperProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [cropError, setCropError] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
   const [naturalSize, setNaturalSize] = useState({ width: 0, height: 0 });
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -35,8 +38,17 @@ export function ImageCropper({
   const VIEWPORT = 280;
 
   useEffect(() => {
+    // Reset the load state every time a new file is picked so a previous
+    // image (or error) never leaks into the next crop session.
+    setImageUrl(null);
+    setLoadError(null);
+    setCropError(null);
+    setConfirming(false);
     const url = URL.createObjectURL(file);
     const img = new Image();
+    // Without onload the dialog sits on "Loading..." forever (e.g. an HEIC
+    // photo the browser cannot decode), and without onerror the user gets no
+    // explanation — both used to look like "nothing happens".
     img.onload = () => {
       const vh = VIEWPORT / aspectRatio;
       const base = Math.max(VIEWPORT / img.naturalWidth, vh / img.naturalHeight);
@@ -46,6 +58,10 @@ export function ImageCropper({
       setImageUrl(url);
       setZoom(1);
       setOffset({ x: (VIEWPORT - w) / 2, y: (vh - h) / 2 });
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      setLoadError("This image could not be read. Try a JPEG, PNG, GIF or WebP file.");
     };
     img.src = url;
     return () => URL.revokeObjectURL(url);
@@ -174,8 +190,8 @@ export function ImageCropper({
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-zinc-500">
-                Loading...
+              <div className="w-full h-full flex items-center justify-center text-zinc-500 px-4 text-center text-sm">
+                {loadError ?? "Loading..."}
               </div>
             )}
             <div className="absolute inset-0 shadow-[inset_0_0_0_2px_rgba(124,58,237,0.6)] pointer-events-none" />
@@ -196,14 +212,36 @@ export function ImageCropper({
           <ZoomIn className="h-4 w-4 text-zinc-500 flex-shrink-0" />
         </div>
 
+        {(loadError || cropError) && (
+          <p role="alert" className="mb-4 text-sm text-red-400">
+            {loadError ?? cropError}
+          </p>
+        )}
+
         <div className="flex gap-3">
           <Button variant="outline" className="flex-1" onClick={onCancel}>
             <X className="h-4 w-4" />
             Cancel
           </Button>
-          <Button className="flex-1" onClick={async () => onConfirm(await cropToFile())}>
+          <Button
+            className="flex-1"
+            disabled={!imageUrl || confirming}
+            onClick={async () => {
+              // cropToFile() used to throw straight into an unhandled promise
+              // rejection (image not loaded yet, canvas unavailable), so the
+              // click appeared to do nothing at all. Surface it instead.
+              setCropError(null);
+              setConfirming(true);
+              try {
+                onConfirm(await cropToFile());
+              } catch (err) {
+                setConfirming(false);
+                setCropError(err instanceof Error ? err.message : "Could not crop this image.");
+              }
+            }}
+          >
             <Check className="h-4 w-4" />
-            Confirm
+            {confirming ? "Saving..." : "Confirm"}
           </Button>
         </div>
       </div>

@@ -277,7 +277,6 @@ export function SampleProfilePreview({
                 backgroundImage: toBackgroundImage(effBackground),
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                backgroundAttachment: "fixed",
               }
             : {}),
         }}
@@ -500,7 +499,7 @@ export function SampleProfilePreview({
 
       {showEditor && editable && (
         <div className="space-y-5">
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+          <div className="rounded-2xl glass p-5">
             <p className="text-sm font-medium text-white mb-4">Sample profile</p>
             <div className="space-y-3">
               <label className="block">
@@ -531,7 +530,7 @@ export function SampleProfilePreview({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+          <div className="rounded-2xl glass p-5">
             <p className="text-sm font-medium text-white mb-4">Appearance</p>
             <div className="grid grid-cols-3 gap-2.5">
               {PRESET_THEMES.map((t, i) => (
@@ -586,7 +585,7 @@ export function SampleProfilePreview({
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5">
+          <div className="rounded-2xl glass p-5">
             <div className="flex items-center justify-between mb-3">
               <p className="text-sm font-medium text-white">Links</p>
               <button

@@ -716,11 +716,21 @@ if (terminalCommands.length >= 12) return;
 setTerminalCommands((prev) => [...prev, { command: "", output: "", description: "", url: "" }]);
   };
 
+  // Extensions the backend accepts for avatars (see ALLOWED_EXTS in
+  // apps/backend/src/routes/profile.ts). Checked here so picking e.g. an HEIC
+  // or SVG never opens a cropper that can only end in a silent failure.
+  const AVATAR_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+
   const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !profile) return;
     e.target.value = "";
     setUploadError("");
+    const ext = `.${file.name.split(".").pop()?.toLowerCase() ?? ""}`;
+    if (!AVATAR_EXTS.includes(ext)) {
+      setUploadError("Unsupported image. Use a JPEG, PNG, GIF or WebP file.");
+      return;
+    }
     setAvatarCropFile(file);
   };
 
@@ -728,13 +738,20 @@ setTerminalCommands((prev) => [...prev, { command: "", output: "", description: 
     if (!profile) return;
     setAvatarCropFile(null);
     setUploadError("");
-    const res = await api.uploadAvatar(file, profile.id);
-    if (res.success && res.data) {
-      setProfiles((prev) =>
-        prev.map((p) => (p.id === profile.id ? { ...p, avatar: res.data!.avatar } : p))
-      );
-    } else {
-      setUploadError(res.error ?? "Failed to upload avatar");
+    // api.uploadAvatar used to throw (non-JSON error page, dropped network)
+    // straight into an unhandled rejection: the dialog was already closed, no
+    // banner appeared, and the click looked like it did nothing.
+    try {
+      const res = await api.uploadAvatar(file, profile.id);
+      if (res.success && res.data) {
+        setProfiles((prev) =>
+          prev.map((p) => (p.id === profile.id ? { ...p, avatar: res.data!.avatar } : p))
+        );
+      } else {
+        setUploadError(res.error ?? "Failed to upload avatar");
+      }
+    } catch {
+      setUploadError("Failed to upload avatar. Check your connection and try again.");
     }
   };
 
@@ -1271,30 +1288,35 @@ setTerminalCommands((prev) => [...prev, { command: "", output: "", description: 
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-zinc-800/80 bg-zinc-900/30">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="text-base font-bold tracking-tight text-white">
-            {branding.name}
+    <div className="min-h-screen bg-background bg-noise">
+      <header className="sticky top-3 z-40 px-3 sm:px-4">
+        <div className="mx-auto flex h-14 max-w-3xl items-center justify-between rounded-full glass-strong px-4 shadow-xl shadow-black/30">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-bold text-zinc-950">
+              {branding.name.charAt(0)}
+            </span>
+            <span className="font-display text-[15px] font-bold tracking-tight text-white">
+              {branding.name}
+            </span>
           </Link>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1 sm:gap-2">
             <a
               href={`/${profile?.slug ?? user?.username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[13px] text-zinc-400 hover:text-violet-400 transition-colors"
+              className="hidden sm:block rounded-full px-3 py-1.5 text-[13px] text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
             >
               View Profile
             </a>
             {isAdmin && (
               <Link
                 to="/admin"
-                className="text-[13px] font-medium text-violet-400 hover:text-violet-300 transition-colors"
+                className="hidden sm:block rounded-full px-3 py-1.5 text-[13px] font-medium text-zinc-300 hover:text-white hover:bg-white/5 transition-colors"
               >
-                Admin Panel
+                Admin
               </Link>
             )}
-            <span className="text-[13px] text-zinc-400">{user?.username}</span>
+            <span className="hidden md:block font-mono text-[11px] text-zinc-500">@{user?.username}</span>
             <Button variant="secondary" size="sm" onClick={logout}>
               Sign out
             </Button>
@@ -1303,10 +1325,10 @@ setTerminalCommands((prev) => [...prev, { command: "", output: "", description: 
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
-        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-xl font-bold text-white">Edit Profile</h1>
-            <p className="mt-1 text-sm text-zinc-400">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-white">Edit Profile</h1>
+            <p className="mt-1 font-mono text-xs text-zinc-500">
               {new URL(branding.url).host}/{profile?.slug ?? user?.username}
             </p>
           </div>
@@ -1338,7 +1360,7 @@ setTerminalCommands((prev) => [...prev, { command: "", output: "", description: 
           </div>
         </div>
 
-        <div className="mb-5 flex gap-1 overflow-x-auto border-b border-zinc-800/80">
+        <div className="mb-5 flex gap-1.5 overflow-x-auto rounded-full glass p-1.5">
           {DASHBOARD_TABS.map((t) => {
             const locked =
               (t === "analytics" || t === "data" || t === "discord") && !hasAdvanced

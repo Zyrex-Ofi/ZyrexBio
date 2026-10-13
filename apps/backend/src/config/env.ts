@@ -1,4 +1,21 @@
 import { z } from "zod";
+import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Local dev (`pnpm dev` → `tsx watch`, cwd = apps/backend) never loaded the
+// repo-root `.env`: tsx has no --env-file flag, nothing imports dotenv, so the
+// Zod schema below crashed with "Invalid environment variables" despite the
+// file existing. Load it here — the single env entry point every consumer
+// (server, CLI, tests) imports — before parsing. Missing file is normal
+// (Docker/CI inject real env, `.env` is dockerignored), never an error.
+// Existing process env always wins: loadEnvFile only fills absent keys, so
+// compose values, test pins (tests/setup-env.ts), and exported vars are
+// never overridden by the file.
+const repoEnvCandidate = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../.env");
+if (existsSync(repoEnvCandidate) && typeof process.loadEnvFile === "function") {
+  process.loadEnvFile(repoEnvCandidate);
+}
 
 function boolFromEnv(v: string): boolean {
   return v === "true" || v === "1";

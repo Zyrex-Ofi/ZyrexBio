@@ -1256,6 +1256,42 @@ export interface PurchaseStatusInfo {
   createdAt: string;
 }
 
+// Shared multipart-POST helper for every file upload (avatar, banner, icons,
+// backgrounds). The upload fns used to call `res.json()` blindly: any
+// non-JSON answer (proxy 413 page, gateway HTML, dropped connection) threw
+// into an unhandled rejection and the UI silently did nothing. This helper
+// always resolves to the `{ success, data?, error? }` shape instead.
+async function postUploadForm<T>(
+  path: string,
+  form: FormData,
+  fallbackError: string
+): Promise<{ success: boolean; data?: T; error?: string }> {
+  const headers: Record<string, string> = {};
+  if (_token) headers["Authorization"] = `Bearer ${_token}`;
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers,
+      body: form,
+      credentials: "include",
+    });
+  } catch {
+    return { success: false, error: "Network error. Check your connection and try again." };
+  }
+  const isJson = (res.headers.get("content-type") ?? "").includes("application/json");
+  if (!isJson) {
+    return { success: false, error: `${fallbackError} (server responded ${res.status})` };
+  }
+  try {
+    const body = (await res.json()) as { success: boolean; data?: T; error?: string };
+    if (!body.success && !body.error) return { success: false, error: fallbackError };
+    return body;
+  } catch {
+    return { success: false, error: fallbackError };
+  }
+}
+
 export const api = {
   getCaptchaConfig: () => request<CaptchaConfig>("/captcha/config"),
   getExternalAnalyticsConfig: () => request<ExternalAnalyticsConfig>("/analytics/config"),
@@ -1570,49 +1606,27 @@ export const api = {
   uploadAvatar: async (file: File, profileId?: string) => {
     const form = new FormData();
     form.append("avatar", file);
-    const headers: Record<string, string> = {};
-    if (_token) headers["Authorization"] = `Bearer ${_token}`;
-    const res = await fetch(
-      `${API_URL}/profiles/me/avatar${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
-      {
-        method: "POST",
-        headers,
-        body: form,
-        credentials: "include",
-      }
+    return postUploadForm<{ avatar: string }>(
+      `/profiles/me/avatar${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
+      form,
+      "Failed to upload avatar"
     );
-    return res.json() as Promise<{ success: boolean; data?: { avatar: string }; error?: string }>;
   },
 
   uploadLinkIcon: async (file: File) => {
     const form = new FormData();
     form.append("linkIcon", file);
-    const headers: Record<string, string> = {};
-    if (_token) headers["Authorization"] = `Bearer ${_token}`;
-    const res = await fetch(`${API_URL}/profiles/me/link-icon`, {
-      method: "POST",
-      headers,
-      body: form,
-      credentials: "include",
-    });
-    return res.json() as Promise<{ success: boolean; data?: { image: string }; error?: string }>;
+    return postUploadForm<{ image: string }>(`/profiles/me/link-icon`, form, "Failed to upload icon");
   },
 
   uploadBanner: async (file: File, profileId?: string) => {
     const form = new FormData();
     form.append("banner", file);
-    const headers: Record<string, string> = {};
-    if (_token) headers["Authorization"] = `Bearer ${_token}`;
-    const res = await fetch(
-      `${API_URL}/profiles/me/banner${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
-      {
-        method: "POST",
-        headers,
-        body: form,
-        credentials: "include",
-      }
+    return postUploadForm<{ banner: string }>(
+      `/profiles/me/banner${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
+      form,
+      "Failed to upload banner"
     );
-    return res.json() as Promise<{ success: boolean; data?: { banner: string }; error?: string }>;
   },
 
   removeAvatar: (profileId?: string) =>
@@ -1624,15 +1638,11 @@ export const api = {
   uploadThemeBackground: async (themeId: string, file: File) => {
     const form = new FormData();
     form.append("background", file);
-    const headers: Record<string, string> = {};
-    if (_token) headers["Authorization"] = `Bearer ${_token}`;
-    const res = await fetch(`${API_URL}/admin/themes/${themeId}/background`, {
-      method: "POST",
-      headers,
-      body: form,
-      credentials: "include",
-    });
-    return res.json() as Promise<{ success: boolean; data?: { backgroundImage: string }; error?: string }>;
+    return postUploadForm<{ backgroundImage: string }>(
+      `/admin/themes/${themeId}/background`,
+      form,
+      "Failed to upload background"
+    );
   },
 
   removeThemeBackground: (themeId: string) =>
@@ -1641,18 +1651,11 @@ export const api = {
   uploadProfileBackground: async (file: File, profileId?: string) => {
     const form = new FormData();
     form.append("background", file);
-    const headers: Record<string, string> = {};
-    if (_token) headers["Authorization"] = `Bearer ${_token}`;
-    const res = await fetch(
-      `${API_URL}/profiles/me/background${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
-      {
-        method: "POST",
-        headers,
-        body: form,
-        credentials: "include",
-      }
+    return postUploadForm<{ backgroundImage: string }>(
+      `/profiles/me/background${profileId ? `?profileId=${encodeURIComponent(profileId)}` : ""}`,
+      form,
+      "Failed to upload background"
     );
-    return res.json() as Promise<{ success: boolean; data?: { backgroundImage: string }; error?: string }>;
   },
 
   removeProfileBackground: (profileId?: string) =>

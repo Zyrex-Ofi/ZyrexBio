@@ -29,39 +29,39 @@ export function Showcase() {
   const landingConfig = useLandingConfig();
 
   return (
-    <section id="showcase" className="py-24 sm:py-32 relative overflow-hidden">
+    <section id="showcase" className="cv-auto py-24 sm:py-32 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-violet-950/[0.03] to-background" />
 
-      <Container className="relative z-10">
+      <Container className="relative z-10" size="narrow">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-14 sm:mb-16">
-            <p className="text-sm font-semibold uppercase tracking-widest text-violet-400 mb-4">Showcase</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500 mb-4">// live preview</p>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white leading-tight">
               See it in action.
             </h2>
-            <p className="mt-5 text-lg text-zinc-400 max-w-xl mx-auto">
+            <p className="mt-4 text-base text-zinc-400 max-w-xl mx-auto">
               Beautiful profiles, powerful customization. This is what your page could look like.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-stretch max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch max-w-4xl mx-auto">
           <ScrollReveal className="lg:col-span-7 h-full" delay={100}>
             <SampleProfilePreview theme={{ ...t.config, layout: activeLayout }} showEditor={false} fill className="h-full" />
           </ScrollReveal>
 
-          <ScrollReveal className="lg:col-span-5" delay={200}>
-            <div className="flex h-full flex-col rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-5 sm:p-6">
+          <ScrollReveal className="lg:col-span-5 w-100" delay={200}>
+            <div className="flex h-full flex-col rounded-2xl glass p-5 sm:p-6">
               <p className="text-sm font-medium text-white mb-4">Theme Customization</p>
-              <div className="grid grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-4 gap-2.5 ws-xl">
                 {themes.map((theme, i) => (
                   <button
                     key={theme.name}
                     onClick={() => setActiveTheme(i)}
-                    className={`relative rounded-xl p-3 transition-all duration-200 cursor-pointer ${
+                    className={`relative rounded-2xl p-3 transition-all duration-200 cursor-pointer ${
                       activeTheme === i
-                        ? "ring-2 ring-violet-500 ring-offset-2 ring-offset-zinc-950"
-                        : "hover:ring-1 hover:ring-zinc-700 hover:ring-offset-1 hover:ring-offset-zinc-950"
+                        ? "ring-2 ring-white ring-offset-2 ring-offset-black"
+                        : "hover:ring-1 hover:ring-white/20 hover:ring-offset-1 hover:ring-offset-black"
                     }`}
                   >
                     <div
@@ -88,8 +88,8 @@ export function Showcase() {
                       onClick={() => setActiveLayout(l.id)}
                       className={`relative rounded-xl border p-2.5 text-left transition-all duration-200 cursor-pointer ${
                         selected
-                          ? "border-violet-500 bg-violet-500/10 ring-1 ring-violet-500/30"
-                          : "border-zinc-800 bg-zinc-900/40 hover:border-zinc-600"
+                          ? "border-white/25 bg-white/[0.07] ring-1 ring-white/20"
+                          : "border-white/[0.08] bg-white/[0.03] hover:border-white/20"
                       }`}
                     >
                       <Icon

@@ -206,6 +206,7 @@ docker-compose.yml    # Service orchestration (postgres, backend, frontend, ngin
 docker-compose.prebuilt.yml # Prebuilt images variant — pulls from Docker Hub / GHCR instead of building
 apps/frontend/public/env.js    # Runtime config stub overwritten by the container entrypoint
 scripts/bioplatform.sh / .ps1   # Host wrappers: docker compose exec backend bioplatform <args> (Linux/macOS + Windows)
+scripts/dev.sh / .ps1          # Local dev bootstrap: .env check → compose postgres+redis → pg_isready wait → prisma migrate deploy → pnpm dev (--skip-docker, --skip-migrate)
 pnpm-workspace.yaml   # Workspace + pnpm config (allowBuilds, nodeLinker)
 .env / .env.example   # Environment variables
 nginx/nginx.conf      # Reverse proxy config (/api, /uploads, ACME challenge, SPA fallback, custom-domains.conf include, app-host map)

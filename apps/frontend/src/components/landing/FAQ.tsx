@@ -65,8 +65,8 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <span className="text-[15px] font-medium pr-4">{question}</span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-300 ease-out",
-            isOpen && "rotate-180 text-violet-400"
+            "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200",
+            isOpen && "rotate-180 text-white"
           )}
         />
       </button>
@@ -90,24 +90,24 @@ export function FAQ() {
   const faqs = buildFaqs(storeOpen);
 
   return (
-    <section id="faq" className="py-24 sm:py-32 relative">
+    <section id="faq" className="cv-auto py-24 sm:py-32 relative">
       <Container size="narrow">
         <ScrollReveal>
-          <div className="text-center mb-14">
-            <p className="text-sm font-semibold uppercase tracking-widest text-violet-400 mb-4">
-              FAQ
+          <div className="text-center mb-12">
+            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500 mb-4">
+              {"// faq"}
             </p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white leading-tight">
               Frequently asked questions.
             </h2>
-            <p className="mt-5 text-lg text-zinc-400">
+            <p className="mt-4 text-base text-zinc-400">
               Everything you need to know about {branding.name}.
             </p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={100}>
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 divide-y divide-zinc-800/60">
+          <div className="rounded-2xl glass divide-y divide-white/[0.06]">
             {faqs.map((faq) => (
               <div key={faq.question} className="px-6 first:pt-1">
                 <FAQItem {...faq} />

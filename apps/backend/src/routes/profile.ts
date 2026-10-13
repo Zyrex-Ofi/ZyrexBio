@@ -1105,7 +1105,10 @@ router.post("/me/avatar", requireAuth, handleUpload("avatar"), async (req, res) 
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   if (!validateFileMagic(req.file.path, ext)) {
-    fs.unlinkSync(req.file.path);
+    // Async unlink (never the sync throw): a missing temp file used to crash
+    // this handler with a 500 HTML page, which the SPA could not parse — the
+    // click looked like it did nothing.
+    await fs.promises.unlink(req.file.path).catch(() => undefined);
     return res.status(400).json({ success: false, error: "Invalid file type. Use JPEG, PNG, GIF, or WebP." });
   }
 
@@ -1118,8 +1121,15 @@ router.post("/me/avatar", requireAuth, handleUpload("avatar"), async (req, res) 
   await writeUpload(req.file.filename, { contentType: req.file.mimetype });
 
   const filePath = `/uploads/${req.file.filename}`;
+  const oldAvatar = profile.avatar;
   await prisma.profile.update({ where: { id: profile.id }, data: { avatar: filePath } });
   void refreshDiscordPostForProfile(profile.id);
+
+  // Remove the replaced avatar so uploads/ does not fill with orphans (the
+  // background route already did this; avatar/banner never did).
+  if (oldAvatar && oldAvatar !== filePath && oldAvatar.startsWith("/uploads/")) {
+    void deleteUpload(path.basename(oldAvatar)).catch(() => undefined);
+  }
 
   res.json({ success: true, data: { avatar: filePath } });
 });
@@ -1131,7 +1141,10 @@ router.post("/me/banner", requireAuth, handleUpload("banner"), async (req, res) 
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   if (!validateFileMagic(req.file.path, ext)) {
-    fs.unlinkSync(req.file.path);
+    // Async unlink (never the sync throw): a missing temp file used to crash
+    // this handler with a 500 HTML page, which the SPA could not parse — the
+    // click looked like it did nothing.
+    await fs.promises.unlink(req.file.path).catch(() => undefined);
     return res.status(400).json({ success: false, error: "Invalid file type. Use JPEG, PNG, GIF, or WebP." });
   }
 
@@ -1144,8 +1157,15 @@ router.post("/me/banner", requireAuth, handleUpload("banner"), async (req, res) 
   await writeUpload(req.file.filename, { contentType: req.file.mimetype });
 
   const filePath = `/uploads/${req.file.filename}`;
+  const oldBanner = profile.banner;
   await prisma.profile.update({ where: { id: profile.id }, data: { banner: filePath } });
   void refreshDiscordPostForProfile(profile.id);
+
+  // Remove the replaced banner so uploads/ does not fill with orphans (the
+  // background route already did this; avatar/banner never did).
+  if (oldBanner && oldBanner !== filePath && oldBanner.startsWith("/uploads/")) {
+    void deleteUpload(path.basename(oldBanner)).catch(() => undefined);
+  }
 
   res.json({ success: true, data: { banner: filePath } });
 });
@@ -1157,7 +1177,10 @@ router.post("/me/link-icon", requireAuth, handleUpload("linkIcon"), async (req, 
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   if (!validateFileMagic(req.file.path, ext)) {
-    fs.unlinkSync(req.file.path);
+    // Async unlink (never the sync throw): a missing temp file used to crash
+    // this handler with a 500 HTML page, which the SPA could not parse — the
+    // click looked like it did nothing.
+    await fs.promises.unlink(req.file.path).catch(() => undefined);
     return res.status(400).json({ success: false, error: "Invalid file type. Use JPEG, PNG, GIF, or WebP." });
   }
 
@@ -1174,7 +1197,10 @@ router.post("/me/background", requireAuth, handleBackgroundUpload("background"),
 
   const ext = path.extname(req.file.originalname).toLowerCase();
   if (!validateFileMagic(req.file.path, ext)) {
-    fs.unlinkSync(req.file.path);
+    // Async unlink (never the sync throw): a missing temp file used to crash
+    // this handler with a 500 HTML page, which the SPA could not parse — the
+    // click looked like it did nothing.
+    await fs.promises.unlink(req.file.path).catch(() => undefined);
     return res.status(400).json({ success: false, error: "Invalid file type. Use JPEG, PNG, GIF, or WebP." });
   }
 
