@@ -1,6 +1,6 @@
 # Zyrex Bio
 
-> [!INFO]  
+> [!NOTE]  
 > Esto es un fork de [BioPlatform](https://github.com/00kino547/BioPlatform)
 
 ### Aún no listo para producción. Espera errores.
