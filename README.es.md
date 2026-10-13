@@ -1,4 +1,8 @@
-# BioPlatform
+# Zyrex Bio
+
+> [!INFO]  
+> Esto es un fork de [BioPlatform](https://github.com/00kino547/BioPlatform)
+
 ### Aún no listo para producción. Espera errores.
 
 > Tu identidad digital, bellamente diseñada.
