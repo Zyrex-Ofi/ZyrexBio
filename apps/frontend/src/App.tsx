@@ -8,45 +8,18 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { Features } from "@/components/landing/Features";
-import { GlobalThemeOverlay } from "@/components/landing/GlobalThemeOverlay";
-import { CookieConsentBanner } from "@/components/CookieConsentBanner";
-import { ConsentGate } from "@/components/legal/ConsentGate";
-import { AnalyticsLoader } from "@/components/AnalyticsLoader";
-// Instance announcement banner (config.yml `public.announcement`): static import
-// because it renders on every route and costs a few hundred bytes.
-import { AnnouncementBanner } from "@/components/landing/AnnouncementBanner";
-
-// Below-fold landing sections load lazily: Showcase pulls the interactive
-// profile preview + layout metadata, the heaviest landing chunk.
-const Showcase = lazy(() =>
-  import("@/components/landing/Showcase").then((m) => ({ default: m.Showcase }))
-);
-const Pricing = lazy(() =>
-  import("@/components/landing/Pricing").then((m) => ({ default: m.Pricing }))
-);
-const FAQ = lazy(() => import("@/components/landing/FAQ").then((m) => ({ default: m.FAQ })));
-const LandingFooter = lazy(() =>
-  import("@/components/landing/Footer").then((m) => ({ default: m.Footer }))
-);
+import { Showcase } from "@/components/landing/Showcase";
+import { Pricing } from "@/components/landing/Pricing";
+import { FAQ } from "@/components/landing/FAQ";
+import { Footer } from "@/components/landing/Footer";
 
 const Login = lazy(() => import("@/pages/Login").then((m) => ({ default: m.Login })));
 const Register = lazy(() => import("@/pages/Register").then((m) => ({ default: m.Register })));
-const OAuthCallback = lazy(() => import("@/pages/OAuthCallback").then((m) => ({ default: m.OAuthCallback })));
-const SsoCallback = lazy(() => import("@/pages/SsoCallback").then((m) => ({ default: m.SsoCallback })));
-const OAuthComplete = lazy(() => import("@/pages/OAuthComplete").then((m) => ({ default: m.OAuthComplete })));
 const Unlock = lazy(() => import("@/pages/Unlock").then((m) => ({ default: m.Unlock })));
-const VerifyEmail = lazy(() => import("@/pages/VerifyEmail").then((m) => ({ default: m.VerifyEmail })));
 const Dashboard = lazy(() => import("@/pages/Dashboard").then((m) => ({ default: m.Dashboard })));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard").then((m) => ({ default: m.AdminDashboard })));
 const PublicProfilePage = lazy(() => import("@/pages/PublicProfile").then((m) => ({ default: m.PublicProfilePage })));
-const Invite = lazy(() => import("@/pages/Invite").then((m) => ({ default: m.Invite })));
 const Privacy = lazy(() => import("@/pages/Privacy").then((m) => ({ default: m.Privacy })));
-// Paid-invite pages are public on purpose: registration is invite-only, so a
-// visitor with no account must be able to buy a code and later redeem it.
-const InviteStore = lazy(() => import("@/pages/InviteStore").then((m) => ({ default: m.InviteStore })));
-const InvitePurchaseStatus = lazy(() =>
-  import("@/pages/InvitePurchaseStatus").then((m) => ({ default: m.InvitePurchaseStatus }))
-);
 const Terms = lazy(() => import("@/pages/Terms").then((m) => ({ default: m.Terms })));
 const ApiDocs = lazy(() => import("@/pages/ApiDocs").then((m) => ({ default: m.ApiDocs })));
 
@@ -83,21 +56,15 @@ function Landing() {
   useJsonLd("website", websiteJsonLd);
   return (
     <>
-      <AnnouncementBanner />
       <Navbar />
       <main>
-        <GlobalThemeOverlay />
         <Hero />
         <Features />
-        <Suspense fallback={null}>
-          <Showcase />
-          <Pricing />
-          <FAQ />
-        </Suspense>
+        <Showcase />
+        <Pricing />
+        <FAQ />
       </main>
-      <Suspense fallback={null}>
-        <LandingFooter />
-      </Suspense>
+      <Footer />
     </>
   );
 }
@@ -151,18 +118,13 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <DomainProvider>
-          <ConsentGate>
           <div className="min-h-screen bg-background text-foreground">
             <Suspense fallback={<PageFallback />}>
               <Routes>
                 <Route path="/" element={<CustomDomainRoot />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/oauth/callback" element={<OAuthCallback />} />
-                <Route path="/sso/callback" element={<SsoCallback />} />
-                <Route path="/oauth/complete" element={<OAuthComplete />} />
                 <Route path="/unlock" element={<Unlock />} />
-                <Route path="/verify-email" element={<VerifyEmail />} />
                 <Route
                   path="/dashboard"
                   element={
@@ -184,17 +146,11 @@ function App() {
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/api-docs" element={<ApiDocs />} />
-                <Route path="/invite/:code" element={<Invite />} />
-                <Route path="/invites" element={<InviteStore />} />
-                <Route path="/invites/purchased/:orderId" element={<InvitePurchaseStatus />} />
                 <Route path="/:username" element={<PublicProfilePage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
-            <CookieConsentBanner />
-            <AnalyticsLoader />
           </div>
-          </ConsentGate>
         </DomainProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -4,19 +4,8 @@ import { cn } from "@/lib/utils";
 import { Container } from "@/components/layout/Container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { branding } from "@/config/branding";
-import { BuyInviteModal } from "@/components/invites/BuyInviteModal";
-import { usePolicyContext } from "@/lib/usePolicyContext";
 
-/**
- * Built per render because one answer depends on whether invites are for sale.
- * Hardcoding the manual-only wording once the store is live would be a false
- * claim about how to get an account.
- */
-/** Matches the invite-system entry, whose answer changes with the store. */
-const INVITE_QUESTION = "How does the invite system work?";
-
-function buildFaqs(storeOpen: boolean) {
-  return [
+const faqs = [
   {
     question: `What is ${branding.name}?`,
     answer: `${branding.name} is a modern link-in-bio platform that lets you create a stunning profile page. Showcase your links, music, and social profiles in one beautifully designed page. It's built for creators, developers, and anyone who wants a polished digital presence.`,
@@ -26,13 +15,8 @@ function buildFaqs(storeOpen: boolean) {
     answer: `Yes. ${branding.name} is fully open source and can be self-hosted on any Linux server with Docker. Our Docker Compose setup gets you running in minutes. You get full control over your data, storage, and deployment.`,
   },
   {
-    question: INVITE_QUESTION,
-    // Stated from the live policy context rather than hardcoded: with the paid
-    // store open, claiming the only route in is a handpicked invitation would be
-    // false, and it would hide the way to actually buy one.
-    answer: storeOpen
-      ? `${branding.name} is an invite-only platform. Accounts cannot be created freely. You can join by receiving a handpicked invitation from our staff, by being requested by an existing member and then manually approved, or by buying an invite yourself — a purchase gives you a code to register with straight away, and a bulk purchase puts any remaining codes on your new account.`
-      : `${branding.name} is an invite-only platform. Accounts cannot be created freely. You can join by either receiving a handpicked invitation from our staff, or by being requested by an existing member and then manually approved before an invite is issued. This exclusivity ensures a high-quality community and prevents spam and abuse.`,
+    question: "How does the invite system work?",
+    answer: `${branding.name} is an invite-only platform. Accounts cannot be created freely. You can join by either receiving a handpicked invitation from our staff, or by being requested by an existing member and then manually approved before an invite is issued. This exclusivity ensures a high-quality community and prevents spam and abuse.`,
   },
   {
     question: "Can I use a custom domain?",
@@ -46,8 +30,7 @@ function buildFaqs(storeOpen: boolean) {
     question: "Is my data secure?",
     answer: "Yes. We use industry-standard encryption for all data at rest and in transit. Passwords are hashed with bcrypt, JWT tokens are used for authentication, and all file uploads are validated and sanitized.",
   },
-  ];
-}
+];
 
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,8 +48,8 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
         <span className="text-[15px] font-medium pr-4">{question}</span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-200",
-            isOpen && "rotate-180 text-white"
+            "h-4 w-4 shrink-0 text-zinc-500 transition-transform duration-300 ease-out",
+            isOpen && "rotate-180 text-violet-400"
           )}
         />
       </button>
@@ -85,41 +68,28 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export function FAQ() {
-  const ctx = usePolicyContext();
-  const storeOpen = ctx?.invites?.purchaseEnabled === true;
-  const faqs = buildFaqs(storeOpen);
-
   return (
-    <section id="faq" className="cv-auto py-24 sm:py-32 relative">
+    <section id="faq" className="py-24 sm:py-32 relative">
       <Container size="narrow">
         <ScrollReveal>
-          <div className="text-center mb-12">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500 mb-4">
-              {"// faq"}
+          <div className="text-center mb-14">
+            <p className="text-sm font-semibold uppercase tracking-widest text-violet-400 mb-4">
+              FAQ
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.02em] text-white leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
               Frequently asked questions.
             </h2>
-            <p className="mt-4 text-base text-zinc-400">
+            <p className="mt-5 text-lg text-zinc-400">
               Everything you need to know about {branding.name}.
             </p>
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={100}>
-          <div className="rounded-2xl glass divide-y divide-white/[0.06]">
+          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/30 divide-y divide-zinc-800/60">
             {faqs.map((faq) => (
               <div key={faq.question} className="px-6 first:pt-1">
                 <FAQItem {...faq} />
-                {/*
-                  An answer that tells people they can buy an invite needs the way
-                  to do it on the same screen, not just a link they have to guess at.
-                */}
-                {storeOpen && faq.question === INVITE_QUESTION ? (
-                  <div className="pb-5">
-                    <BuyInviteModal />
-                  </div>
-                ) : null}
               </div>
             ))}
           </div>

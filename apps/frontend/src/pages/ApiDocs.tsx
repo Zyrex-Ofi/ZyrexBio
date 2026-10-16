@@ -69,7 +69,7 @@ export function ApiDocs() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <main className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
+      <main className="mx-auto max-w-4xl px-4 my-xl py-12 sm:py-16">
         <h1 className="text-3xl font-bold text-white">API Reference</h1>
         <p className="text-sm text-zinc-400 mt-2">
           {branding.name} REST API — OpenAPI 3.0. Raw spec available at{" "}

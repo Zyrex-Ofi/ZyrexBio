@@ -1,108 +1,58 @@
-import { ArrowRight, Star, Eye, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Sparkles, Shield, Zap, Globe, Users, Eye, LayoutDashboard } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/layout/Container";
 import { branding } from "@/config/branding";
 import { useAuth } from "@/contexts/AuthContext";
-import { useLandingConfig } from "@/lib/useLandingConfig";
-import { useInstanceConfig } from "@/lib/useInstanceConfig";
-import { BuyInviteModal } from "@/components/invites/BuyInviteModal";
-import { usePolicyContext } from "@/lib/usePolicyContext";
 
-// Landing v2: "midnight signal".
-// - Static glow + grid (no animated blobs, no backdrop-blur on large areas)
-// - Headline uses text-gradient-static: zero per-frame cost
-// - Browser-chrome profile mock reads as product screenshot, not decoration
-// - Platform ticker is one compositor-only translateX loop (cheap)
-// - Social proof row replaces the old stats block
-const TICKER = [
-  "Spotify", "YouTube", "Discord", "GitHub", "Twitch",
-  "TikTok", "Instagram", "X", "SoundCloud", "Steam",
+const stats = [
+  { icon: Users, value: "2,400+", label: "Early Access Users" },
+  { icon: Eye, value: "50k+", label: "Page Views" },
+  { icon: Zap, value: "<50ms", label: "Load Time" },
 ];
-
-const STACK = [
-  { initial: "K", bg: "from-violet-500 to-purple-700" },
-  { initial: "M", bg: "from-cyan-500 to-sky-700" },
-  { initial: "J", bg: "from-emerald-500 to-teal-700" },
-  { initial: "A", bg: "from-amber-500 to-orange-700" },
-  { initial: "R", bg: "from-rose-500 to-pink-700" },
-];
-
-function Ticker() {
-  const row = (hidden: boolean) => (
-    <div className="flex shrink-0 items-center" aria-hidden={hidden}>
-      {TICKER.map((name) => (
-        <span key={name} className="flex items-center">
-          <span className="px-6 font-mono text-xs uppercase tracking-[0.22em] text-zinc-500">
-            {name}
-          </span>
-          <span className="h-1 w-1 rounded-full bg-zinc-700" />
-        </span>
-      ))}
-    </div>
-  );
-  return (
-    <div className="relative mt-16 sm:mt-20 border-y border-white/[0.06] py-4 overflow-hidden marquee-mask">
-      <div className="flex w-max animate-marquee">
-        {row(false)}
-        {row(true)}
-      </div>
-    </div>
-  );
-}
-
 
 export function Hero() {
   const { user } = useAuth();
-  const landingConfig = useLandingConfig();
-  const instance = useInstanceConfig();
-  const ctx = usePolicyContext();
-  const storeOpen = ctx?.invites?.purchaseEnabled === true;
-  // config.yml landing copy wins; the branding values remain the zero-config
-  // fallback (empty strings are exactly what an absent config.yml yields).
-  const heroHeading = instance?.landing.hero.heading.trim() || "";
-  const heroSubheading = instance?.landing.hero.subheading.trim() || "";
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-grid bg-grid-fade" />
-      {/* Single static glow: painted once, cached as a layer, never animated */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[720px] h-[420px] bg-violet-600/[0.09] rounded-full blur-[120px]" />
 
-      <Container className="relative z-10 pt-32 sm:pt-40 pb-14" size="narrow">
-        <div className="mx-auto max-w-3xl text-center">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] bg-violet-600/[0.07] rounded-full blur-[120px] animate-pulse-slow" />
+      <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-cyan-500/[0.04] rounded-full blur-[100px] animate-float" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-violet-500/[0.03] rounded-full blur-[100px] animate-float-delayed" />
+
+      <div className="absolute top-20 left-1/4 w-px h-32 bg-gradient-to-b from-transparent via-violet-500/20 to-transparent" />
+      <div className="absolute top-40 right-1/3 w-px h-24 bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent" />
+
+      <Container className="relative z-10 py-32 sm:py-40">
+        <div className="mx-auto max-w-4xl text-center">
           <div className="animate-fade-in">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#101014] px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <Badge variant="violet" className="mb-8 inline-flex items-center gap-1.5 px-4 py-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
               Now in Early Access
-            </span>
+            </Badge>
           </div>
 
-          <h1 className="mt-7 font-display text-5xl font-bold tracking-[-0.03em] sm:text-7xl leading-[1.02] animate-reveal">
-            {heroHeading ? (
-              <span className="text-white block">{heroHeading}</span>
-            ) : (
-              <>
-                <span className="text-white block">{branding.tagline.split(",")[0]},</span>
-                <span className="text-gradient-static block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
-              </>
-            )}
+          <h1 className="text-5xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl leading-[1.05] animate-reveal">
+            <span className="text-white block">{branding.tagline.split(",")[0]},</span>
+            <span className="text-gradient block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
           </h1>
 
           <p
-            className="mt-6 text-base sm:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed animate-reveal opacity-0-initial"
-            style={{ animationDelay: "150ms" }}
+            className="mt-8 text-lg sm:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed animate-reveal opacity-0-initial"
+            style={{ animationDelay: "200ms" }}
           >
-            {heroSubheading ||
-              `${branding.description}. Links, themes, and analytics — all in one page.`}
+            {branding.description}. Links, themes, and analytics — all in one beautifully designed page.
           </p>
 
           <div
-            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 animate-reveal opacity-0-initial"
-            style={{ animationDelay: "250ms" }}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-reveal opacity-0-initial"
+            style={{ animationDelay: "400ms" }}
           >
             {user ? (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-semibold bg-white text-zinc-950 hover:bg-zinc-200 transition-colors group w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-700 shadow-xl shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-200 group"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 Go to Dashboard
@@ -111,110 +61,59 @@ export function Hero() {
             ) : (
               <Link
                 to="/register"
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-semibold bg-white text-zinc-950 hover:bg-zinc-200 transition-colors group w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium bg-violet-600 text-white hover:bg-violet-700 shadow-xl shadow-violet-600/25 hover:shadow-violet-600/40 transition-all duration-200 group"
               >
                 Get Early Access
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             )}
-            {/*
-              Invite-only means the register button dead-ends for anyone without a
-              code, so the store gets a first-class CTA next to it. Only rendered
-              when the instance is actually selling credits.
-            */}
-            {storeOpen ? (
-              <BuyInviteModal
-                className="h-12 px-8 text-[15px] rounded-full"
-                label="Buy an invite"
-              />
-            ) : null}
             <a
               href="#showcase"
-              className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-medium border border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.08] transition-colors w-full sm:w-auto"
+              className="inline-flex items-center justify-center gap-2 h-13 px-8 text-base rounded-lg font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-all duration-200"
             >
               View Showcase
             </a>
-            {landingConfig?.featuredProfileUsername && (
-              <Link
-                to={`/${landingConfig.featuredProfileUsername}`}
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-[15px] rounded-full font-medium border border-white/10 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.08] transition-colors w-full sm:w-auto"
+          </div>
+
+          <div
+            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8 sm:gap-12 animate-reveal opacity-0-initial"
+            style={{ animationDelay: "600ms" }}
+          >
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800/50 border border-zinc-700/50">
+                  <stat.icon className="h-4.5 w-4.5 text-zinc-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-lg font-semibold text-white leading-tight">{stat.value}</p>
+                  <p className="text-xs text-zinc-500">{stat.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            className="mt-14 flex items-center justify-center gap-x-6 gap-y-3 flex-wrap animate-reveal opacity-0-initial"
+            style={{ animationDelay: "800ms" }}
+          >
+            {[
+              { icon: Shield, label: "Open Source" },
+              { icon: Zap, label: "Lightning Fast" },
+              { icon: Globe, label: "Self-Hostable" },
+            ].map((badge) => (
+              <div
+                key={badge.label}
+                className="flex items-center gap-2 text-sm text-zinc-500"
               >
-                <Eye className="h-4 w-4" />
-                Live profile
-              </Link>
-            )}
-          </div>
-
-          {/* Social proof: avatar stack + stars + mono count */}
-          <div
-            className="mt-9 flex items-center justify-center gap-3 animate-reveal opacity-0-initial"
-            style={{ animationDelay: "350ms" }}
-          >
-            <div className="flex -space-x-2.5">
-              {STACK.map((s) => (
-                <span
-                  key={s.initial}
-                  className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br ${s.bg} text-xs font-bold text-white ring-2 ring-[#08080a]`}
-                >
-                  {s.initial}
-                </span>
-              ))}
-            </div>
-            <div className="text-left">
-              <span className="flex items-center gap-0.5" aria-label="5 out of 5 stars">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                ))}
-              </span>
-              <p className="mt-1 font-mono text-[11px] text-zinc-500">
-                Loved by 2,400+ early creators
-              </p>
-            </div>
-          </div>
-
-          {/* Product mock: browser chrome + guns.lol profile. Solid bg, no blur. */}
-          <div
-            className="mx-auto mt-12 max-w-sm text-left animate-reveal opacity-0-initial"
-            style={{ animationDelay: "450ms" }}
-          >
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d10] shadow-2xl shadow-black/60">
-              <div className="flex items-center gap-1.5 border-b border-white/[0.06] px-4 py-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-                <span className="ml-3 flex-1 truncate rounded-full bg-white/[0.05] px-3 py-1 font-mono text-[10px] text-zinc-500">
-                  {branding.name.toLowerCase().replace(/\s+/g, "")}.gg/you
-                </span>
+                <badge.icon className="h-4 w-4 text-zinc-600" />
+                {badge.label}
               </div>
-              <div className="p-6">
-                <div className="flex flex-col items-center text-center">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 text-xl font-bold text-white avatar-ring">
-                    {branding.name.charAt(0)}
-                  </div>
-                  <p className="mt-3 font-display text-lg font-bold tracking-tight text-white">
-                    {branding.name}
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] text-zinc-500">
-                    @{branding.name.toLowerCase().replace(/\s+/g, "")} · online
-                  </p>
-                </div>
-                <div className="mt-5 flex flex-col gap-2">
-                  {["Latest drop", "Tour dates", "Discord server"].map((label) => (
-                    <div key={label} className="gun-link flex items-center justify-between px-4 py-2.5">
-                      <span className="text-[13px] font-medium text-zinc-200">{label}</span>
-                      <ArrowRight className="h-3.5 w-3.5 text-zinc-500" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </Container>
 
-      <Ticker />
-
-      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
     </section>
   );
 }

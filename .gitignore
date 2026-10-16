@@ -59,6 +59,7 @@ uploads/
 
 # Data
 data/
+apps/backend/data/
 
 # Databases & backups (may contain real credentials/data)
 *.db

@@ -2,7 +2,6 @@ import { Container } from "@/components/layout/Container";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { VersionBadge } from "@/components/updates/VersionBadge";
 import { branding } from "@/config/branding";
-import { useInstanceConfig } from "@/lib/useInstanceConfig";
 
 function GitHubIcon({ className }: { className?: string }) {
   return (
@@ -28,40 +27,35 @@ const footerLinks = {
     { label: "Terms of Service", href: "/terms" },
     { label: "Contact", href: branding.contactUrl },
   ],
-  Preferences: [{ label: "Cookie Preferences", action: "cookies" }],
 };
 
 export function Footer() {
-  const onCookiePrefs = () => window.dispatchEvent(new CustomEvent("bio:open-cookie-settings"));
-  const instance = useInstanceConfig();
-  // config.yml landing copy wins; branding.* is the zero-config fallback.
-  const blurb = instance?.landing.footerAbout.trim() || instance?.landing.tagline.trim() || branding.tagline;
   return (
     <footer className="relative">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
 
-      <Container size="wide">
-        <div className="py-14 sm:py-16">
+      <Container>
+        <div className="py-16 sm:py-20">
           <ScrollReveal>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-8">
               <div className="col-span-2 md:col-span-1">
                 <a href="/" className="flex items-center gap-2.5 mb-5">
-                  <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center text-sm font-bold text-zinc-950">
+                  <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-sm font-bold text-white shadow-lg shadow-violet-500/20">
                     {branding.name.charAt(0)}
                   </div>
-                  <span className="font-display text-lg font-bold text-white tracking-tight">
+                  <span className="text-lg font-semibold text-white tracking-tight">
                     {branding.name}
                   </span>
                 </a>
                 <p className="text-sm text-zinc-500 leading-relaxed max-w-[240px]">
-                  {blurb}
+                  {branding.tagline}
                 </p>
                 <div className="mt-5 flex items-center gap-3">
                   <a
                     href={branding.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800/50 border border-zinc-800 text-zinc-400 hover:text-white hover:bg-zinc-800 hover:border-zinc-700 transition-all"
                     aria-label="GitHub"
                   >
                     <GitHubIcon className="h-4 w-4" />
@@ -75,33 +69,18 @@ export function Footer() {
                     {category}
                   </h4>
                   <ul className="space-y-3">
-                    {links.map((link) => {
-                      if ("action" in link) {
-                        return (
-                          <li key={link.label}>
-                            <button
-                              type="button"
-                              onClick={onCookiePrefs}
-                              className="text-sm text-zinc-500 hover:text-white transition-colors cursor-pointer"
-                            >
-                              {link.label}
-                            </button>
-                          </li>
-                        );
-                      }
-                      return (
-                        <li key={link.label}>
-                          <a
-                            href={link.href}
-                            target={link.href.startsWith("http") ? "_blank" : undefined}
-                            rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                            className="text-sm text-zinc-500 hover:text-white transition-colors"
-                          >
-                            {link.label}
-                          </a>
-                        </li>
-                      );
-                    })}
+                    {links.map((link) => (
+                      <li key={link.label}>
+                        <a
+                          href={link.href}
+                          target={link.href.startsWith("http") ? "_blank" : undefined}
+                          rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                          className="text-sm text-zinc-500 hover:text-white transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               ))}
@@ -109,7 +88,7 @@ export function Footer() {
           </ScrollReveal>
         </div>
 
-        <div className="border-t border-white/[0.06] py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-zinc-800/60 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-zinc-600">
             &copy; {new Date().getFullYear()} {branding.name}. All rights reserved.
           </p>
