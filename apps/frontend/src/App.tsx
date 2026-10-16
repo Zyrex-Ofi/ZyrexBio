@@ -12,6 +12,9 @@ import { GlobalThemeOverlay } from "@/components/landing/GlobalThemeOverlay";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { ConsentGate } from "@/components/legal/ConsentGate";
 import { AnalyticsLoader } from "@/components/AnalyticsLoader";
+// Instance announcement banner (config.yml `public.announcement`): static import
+// because it renders on every route and costs a few hundred bytes.
+import { AnnouncementBanner } from "@/components/landing/AnnouncementBanner";
 
 // Below-fold landing sections load lazily: Showcase pulls the interactive
 // profile preview + layout metadata, the heaviest landing chunk.
@@ -80,6 +83,7 @@ function Landing() {
   useJsonLd("website", websiteJsonLd);
   return (
     <>
+      <AnnouncementBanner />
       <Navbar />
       <main>
         <GlobalThemeOverlay />

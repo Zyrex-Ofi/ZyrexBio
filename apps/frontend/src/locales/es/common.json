@@ -1,0 +1,142 @@
+{
+    "backgroundSelector": {
+        "customUrl": "URL Personalizada",
+        "customUrlPlaceholder": "https://… or /uploads/…",
+        "presets": {
+            "aurora": "Aurora",
+            "candy": "Dulce",
+            "ember": "Ember",
+            "forest": "Bosque",
+            "ice": "Hielo",
+            "midnight": "Media Noche",
+            "mint": "Menta",
+            "none": "Ninguno",
+            "ocean": "Océano",
+            "royal": "Royal",
+            "sunset": "Puesta del sol"
+        },
+        "removeCustom": "Eliminar personalizado",
+        "seasonal": {
+            "autumnLeaves": "Hojas de otoño",
+            "christmas": "Navidad",
+            "halloween": "Halloween",
+            "newYear": "Nuevo Año",
+            "springBlossom": "Flor de primavera",
+            "stPatrick": "St. Patrick",
+            "valentine": "San Valentín",
+            "winterSnow": "Nieve de Invierno"
+        },
+        "seasonalTitle": "Estacional Y Festivo",
+        "upload": "Subir imagen / GIF",
+        "uploading": "Subiendo {{name}}…"
+    },
+    "cookieConsent": {
+        "acceptAll": "Aceptar todo",
+        "ariaLabel": "Consentimiento para Cookies",
+        "close": "Cerrar",
+        "description": "{{name}} utiliza cookies esenciales (autenticación, seguridad) que siempre están activas, y cookies opcionales para analíticas anonimas que solo son cargadas cuando aceptas.",
+        "dntNotice": "Tu navegador envia la solicitud dnt (Do Not Track / No rastrear), con lo que, las cookies para analíticas están apagadas. Acepta todo debajo para encenderlas para esta web.",
+        "error": "Tu elección no se pudo guardar. Por favor intenta de nuevo.",
+        "essentialOnly": "Solo esenciales",
+        "essentialOnlyCountdown": "Solo esenciales ({{seconds}}s)",
+        "learnMore": "Aprende mas en la Politica de Privacidad",
+        "titleNew": "Valoramos tu privacidad",
+        "titlePreferences": "Preferencias para cookies"
+    },
+    "dialog": {
+        "close": "Cerrar"
+    },
+    "errorBoundary": {
+        "heading": "Algo fué mal cargando esta página.",
+        "tryAgain": "Intentar de nuevo",
+        "unexpected": "Error inesperado"
+    },
+    "footer": {
+        "api": "API",
+        "cookiePreferences": "Preferencias de cookies",
+        "copyright": "© {{year}} {{name}}. Todos los derechos reservados.",
+        "github": "GitHub",
+        "privacy": "Privacidad",
+        "terms": "Terminos"
+    },
+    "imageCropper": {
+        "cancel": "Cancelar",
+        "confirm": "Confirmar",
+        "hint": "Arrastra para mover y scrollea para zoom. Elije la parte que quieres mostrar.",
+        "loading": "Cargando...",
+        "previewAlt": "Muestra previa del recortado",
+        "title": "Posiciona tu imagen"
+    },
+    "language": {
+        "label": "Idioma"
+    },
+    "layoutSelector": {
+        "bento": {
+            "hint": "Casillas de tamaños mezclados",
+            "label": "Bento"
+        },
+        "compact": {
+            "hint": "Solo una columna apretada",
+            "label": "Compacto"
+        },
+        "default": {
+            "hint": "Carta simple y centrada",
+            "label": "Default"
+        },
+        "editorial": {
+            "hint": "Masthead + hairlines",
+            "label": "Editorial"
+        },
+        "glassmorphism": {
+            "hint": "Tarjeta de cristal opaco",
+            "label": "Cristal"
+        },
+        "grid": {
+            "hint": "2-column icon tiles",
+            "label": "Tabla"
+        },
+        "hero": {
+            "hint": "Big centered hero",
+            "label": "Hero"
+        },
+        "minimal": {
+            "hint": "Limpio, sin bordes",
+            "label": "Minimalista"
+        },
+        "polaroid": {
+            "hint": "Tilted photo frame",
+            "label": "Polaroid"
+        },
+        "sidebar": {
+            "hint": "Avatar junto al contenido",
+            "label": "Barra lateral"
+        },
+        "terminal": {
+            "hint": "Hacker monospace card",
+            "label": "Terminal"
+        },
+        "topbar": {
+            "hint": "Horizontal nav header",
+            "label": "Barra superior"
+        },
+        "wide": {
+            "hint": "Full-width 3 columns",
+            "label": "Ancho"
+        }
+    },
+    "nav": {
+        "apiDocs": "Documentación de la API",
+        "dashboard": "Panel de control",
+        "faq": "FAQ",
+        "features": "Funciones",
+        "getStarted": "Comienza",
+        "pricing": "Precio",
+        "showcase": "Showcase",
+        "signIn": "Iniciar Sesión",
+        "toggleMenu": "Alternar menú"
+    },
+    "untranslatedNotice": {
+        "dismiss": "Rechazar",
+        "message": "Esta página no está completamente traducida aún, con lo que aun texto es mostrado en Inglés."
+    }
+}

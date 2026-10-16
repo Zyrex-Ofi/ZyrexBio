@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/Container";
 import { branding } from "@/config/branding";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLandingConfig } from "@/lib/useLandingConfig";
+import { useInstanceConfig } from "@/lib/useInstanceConfig";
 import { BuyInviteModal } from "@/components/invites/BuyInviteModal";
 import { usePolicyContext } from "@/lib/usePolicyContext";
 
@@ -53,8 +54,13 @@ function Ticker() {
 export function Hero() {
   const { user } = useAuth();
   const landingConfig = useLandingConfig();
+  const instance = useInstanceConfig();
   const ctx = usePolicyContext();
   const storeOpen = ctx?.invites?.purchaseEnabled === true;
+  // config.yml landing copy wins; the branding values remain the zero-config
+  // fallback (empty strings are exactly what an absent config.yml yields).
+  const heroHeading = instance?.landing.hero.heading.trim() || "";
+  const heroSubheading = instance?.landing.hero.subheading.trim() || "";
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-grid bg-grid-fade" />
@@ -71,15 +77,22 @@ export function Hero() {
           </div>
 
           <h1 className="mt-7 font-display text-5xl font-bold tracking-[-0.03em] sm:text-7xl leading-[1.02] animate-reveal">
-            <span className="text-white block">{branding.tagline.split(",")[0]},</span>
-            <span className="text-gradient-static block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
+            {heroHeading ? (
+              <span className="text-white block">{heroHeading}</span>
+            ) : (
+              <>
+                <span className="text-white block">{branding.tagline.split(",")[0]},</span>
+                <span className="text-gradient-static block mt-1">{branding.tagline.split(",")[1]?.trim()}</span>
+              </>
+            )}
           </h1>
 
           <p
             className="mt-6 text-base sm:text-lg text-zinc-400 max-w-xl mx-auto leading-relaxed animate-reveal opacity-0-initial"
             style={{ animationDelay: "150ms" }}
           >
-            {branding.description}. Links, themes, and analytics — all in one page.
+            {heroSubheading ||
+              `${branding.description}. Links, themes, and analytics — all in one page.`}
           </p>
 
           <div
