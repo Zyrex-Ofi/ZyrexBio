@@ -105,12 +105,15 @@ public:
     # <meta name="..." content="..."> tags rendered on public profile pages for
     # ad-network site verification (AdSense Search Console, Adsterra/AADS owner
     # checks, …). Exactly what your network's domain-verification tool prints.
-    verificationMeta:
+    # NOTE: an empty list must be written as `[]`. Zod's `.default([])` only
+    # fills an ABSENT key — a bare `key:` parses as YAML null and
+    # loadInstanceConfig() refuses to boot the server.
+    verificationMeta: []
       # - name: "google-site-verification"
       #   content: "AbCdEfGhIjKl..."
     # One entry per ad slot. Multiple slots are supported; single-slot is the
     # tested path and most networks have a page-ownership check anyway.
-    slots:
+    slots: []
       # --- AdSense (banner) ------------------------------------------------
       # - network: "adsense"
       #   placement: "below-links"
